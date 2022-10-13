@@ -24,6 +24,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "knex": "^2.3.0",
+    "remove-accents": "^0.4.3",
     "sqlite3": "^5.1.2"
   },
   "devDependencies": {
