@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import logo from "../../assets/logo.svg";
 import { MapContainer, TileLayer, Marker, useMapEvents, Popup } from "react-leaflet";
 import { LatLng, LeafletMouseEvent } from "leaflet";
 import api from "../../services/api";
 import axios from "axios";
+import removeAccents from 'remove-accents';
 
 interface Item {
     id: number;
@@ -34,13 +35,21 @@ const CreatePoint = () => {
     
     const [selectedUf, setSelectedUf] = useState("0");
     const [selectedCity, setSelectedCity] = useState("0");
+    const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
     const [position, setPosition] = useState<LatLng>(new LatLng(-23.561999, -46.655927));
 
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        celular: ''
+    });
+
+    const navigate = useNavigate();
 
     // useEffect: executa uma função assim que o componente é exibido em tela
     // SÓ É EXECUTADO UMA UNICA VEZ
-    
+
     // pega os items do banco de dados para apresentar no formulario
     useEffect(() => {
         api.get('items').then(response => {
@@ -88,6 +97,55 @@ const CreatePoint = () => {
         setSelectedCity(city);
     }
 
+    function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const { name, value } = event.target;
+
+        // para manter os dados que ja tem, usar o spread operator (copia tudo que ja tem)
+        setFormData({ ...formData, [name]: value });
+    }
+    
+    function handleSelectItem(id: number) {
+        // para modificar um estado não podemos so fazer um push/pop (todo o estado é substituido)
+        // copiar o array adicionando ou removendo o item selecionado
+
+        const alreadySelected = selectedItems.findIndex(item => item === id);
+
+        if (alreadySelected >= 0) {
+            const filteredItems = selectedItems.filter(item => item !== id);
+            setSelectedItems(filteredItems);
+        } else {
+            setSelectedItems([ ...selectedItems, id ]);
+        }
+    }
+
+    async function handleSubmit(event: React.FormEvent) {
+        // previne o comportamento padrão do formulario (recarregar a pagina)
+        event.preventDefault();
+
+        const { name, email, celular } = formData;
+        const uf = selectedUf;
+        const city = removeAccents(String(selectedCity).toLowerCase());
+        const [latitude, longitude] = [position.lat, position.lng];
+        const items = selectedItems;
+
+        const data = {
+            name,
+            email,
+            celular,
+            uf,
+            city,
+            latitude,
+            longitude,
+            items
+        };        
+
+        await api.post('points', data);
+
+        alert('Ponto de coleta criado!');
+
+        navigate('/');
+    }
+
     function LocationMarker() {
         const map = useMapEvents({
             click(e:LeafletMouseEvent) {
@@ -114,7 +172,7 @@ const CreatePoint = () => {
                 </Link>
             </header>
 
-            <form>
+            <form onSubmit={handleSubmit}>
                 <h1>Cadastro do <br /> ponto de coleta</h1>
 
                 {/* Fields de cadastro do nome da entidade, email e celular */}
@@ -132,11 +190,12 @@ const CreatePoint = () => {
                             type="text" 
                             name="name" 
                             id="name"
+                            onChange={handleInputChange}
                         />
                     </div>
 
                     <div className="field-group">
-
+                        {/* Email */}
                         <div className="field">
                             {/* assim como o for */}
                             <label htmlFor="email">Email</label>
@@ -145,8 +204,11 @@ const CreatePoint = () => {
                                 type="email" 
                                 name="email" 
                                 id="email"
+                                onChange={handleInputChange}
                             />
                         </div>
+
+                        {/* Celular */}
                         <div className="field">
                         {/* assim como o for */}
                         <label htmlFor="celular">Celular</label>
@@ -155,6 +217,7 @@ const CreatePoint = () => {
                             type="text" 
                             name="celular" 
                             id="celular"
+                            onChange={handleInputChange}
                         />
                         </div>
 
@@ -208,9 +271,11 @@ const CreatePoint = () => {
                     </legend>
                     <ul className="items-grid">
                         {items.map(item => (
-                            <li key={item.id}>
-                                <img src={item.image_url} alt={item.title}/>
-                                <span>{item.title}</span>
+                            <li key={item.id} 
+                                onClick={() => handleSelectItem(item.id)}
+                                className={selectedItems.includes(item.id) ? 'selected' : ''}>
+                                    <img src={item.image_url} alt={item.title}/>
+                                    <span>{item.title}</span>
                             </li>
                         ))}
                     </ul>
