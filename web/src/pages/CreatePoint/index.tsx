@@ -34,6 +34,7 @@ const CreatePoint = () => {
     
     const [selectedUf, setSelectedUf] = useState("0");
     const [selectedCity, setSelectedCity] = useState("0");
+    // const [initialPosition, setInitialPosition] = useState<[number, number]>([-23.561999, -46.655927]);
     const [position, setPosition] = useState<LatLng>(new LatLng(-23.561999, -46.655927));
 
 
@@ -66,6 +67,15 @@ const CreatePoint = () => {
 
     }, [selectedUf]);
 
+    // pega a localização do usuario
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition(position => {
+            const { latitude, longitude } = position.coords;
+            setPosition(new LatLng(latitude, longitude));
+        });
+
+    }, []);
+
 
     // modifica o valor do estado toda vez que o usuario seleciona uma UF
     function handleSelectUf(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -78,18 +88,18 @@ const CreatePoint = () => {
         setSelectedCity(city);
     }
 
-    // TODO: pegar a posição do usuario + opção por click no mapa
     function LocationMarker() {
-        useMapEvents({
-          click(e:LeafletMouseEvent) {
-            setPosition(e.latlng)
-          }
+        const map = useMapEvents({
+            click(e:LeafletMouseEvent) {
+                setPosition(e.latlng)
+            }
         })
       
         return position === null ? null : (
-          <Marker position={position}>
-            <Popup>You are here</Popup>
-          </Marker>
+            map.flyTo(position, 15),
+            <Marker position={position}>
+                <Popup>You are here</Popup>
+            </Marker>
         )
     }
 
@@ -157,11 +167,10 @@ const CreatePoint = () => {
                     </legend>
                     
                     {/* center: recebe [latitude, longitude] */}
-                    <MapContainer center={position} zoom={12} style={{ width: '100%', height: 280 }}>
+                    <MapContainer center={position} zoom={5} style={{ width: '100%', height: 280 }}>
                         <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
 
-                        <Marker position={position} />
                         <LocationMarker />
                     </MapContainer>
 
