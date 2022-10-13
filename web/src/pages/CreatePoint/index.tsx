@@ -34,7 +34,7 @@ const CreatePoint = () => {
     
     const [selectedUf, setSelectedUf] = useState("0");
     const [selectedCity, setSelectedCity] = useState("0");
-    // const [initialPosition, setInitialPosition] = useState<[number, number]>([-23.561999, -46.655927]);
+
     const [position, setPosition] = useState<LatLng>(new LatLng(-23.561999, -46.655927));
 
 
