@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import knex from '../database/connections';
+import removeAccents from 'remove-accents';
 
 class PointsController {
     async get(req:Request, res:Response){
@@ -17,10 +18,10 @@ class PointsController {
             .join('point_items', 'points.id', '=', 'point_items.point_id')
             .where((qb) => {
                 if(city){
-                    qb.where('city', String(city))
+                    qb.where('city', removeAccents(String(city).toLowerCase()))
                 }
                 if(uf){
-                    qb.where('uf', String(uf))
+                    qb.where('uf', String(uf).toUpperCase())
                 }
                 if(items){
                     //  todos os pontos que tem pelo menos um dos items que estao na lista
