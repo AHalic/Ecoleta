@@ -3,24 +3,35 @@ import knex from '../database/connections';
 
 class PointsController {
     async get(req:Request, res:Response){
-        // TODO: verificar se o query param é vazio e retornar todos os pontos
-        // verificar variaveis vazias (possibilidade de usar alguns dos filtros)
-
         const { city, uf, items } = req.query;
 
-        const parsedItems = String(items)
-            .split(',')
-            .map(item => Number(item.trim()));
+        // if no filter was passed, return all points
+        if (!city && !uf && !items){
+            const points = await knex('points')
+            .select('points.*');
+
+            return res.json(points);
+        }
 
         const points = await knex('points')
             .join('point_items', 'points.id', '=', 'point_items.point_id')
-            //  todos os pontos que tem pelo menos um dos items que estao na lista
-            .whereIn('point_items.item_id', parsedItems)
-            .where('city', String(city))
-            .where('uf', String(uf))
+            .where((qb) => {
+                if(city){
+                    qb.where('city', String(city))
+                }
+                if(uf){
+                    qb.where('uf', String(uf))
+                }
+                if(items){
+                    //  todos os pontos que tem pelo menos um dos items que estao na lista
+                    const parsedItems = String(items)
+                        .split(',')
+                        .map(item => Number(item.trim()));
+                    qb.whereIn('point_items.item_id', parsedItems)
+                }})
             .distinct()
             .select('points.*');
-    
+
         return res.json(points);
     }
 
@@ -49,7 +60,7 @@ class PointsController {
         const {
             name,
             email,
-            whatsapp,
+            celular,
             latitude,
             longitude,
             city,
@@ -64,7 +75,7 @@ class PointsController {
             image: 'image-fake',
             name, 
             email,
-            whatsapp,
+            celular,
             latitude,
             longitude,
             city,
@@ -75,7 +86,7 @@ class PointsController {
             image: 'image-fake',
             name, // name: name
             email,
-            whatsapp,
+            celular,
             latitude,
             longitude,
             city,
