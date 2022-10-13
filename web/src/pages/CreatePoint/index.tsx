@@ -117,6 +117,7 @@ const CreatePoint = () => {
             <form>
                 <h1>Cadastro do <br /> ponto de coleta</h1>
 
+                {/* Fields de cadastro do nome da entidade, email e celular */}
                 <fieldset>
                     <legend>
                         <h2>Dados</h2>
@@ -160,6 +161,7 @@ const CreatePoint = () => {
                     </div>
                 </fieldset>
 
+                {/* Fields de cadastro do endereço */}
                 <fieldset>
                     <legend>
                         <h2>Endereço</h2>
@@ -199,6 +201,7 @@ const CreatePoint = () => {
                     </div>
                 </fieldset>
 
+                {/* Fields de cadastro dos itens */}
                 <fieldset>
                     <legend>
                         <h2>Itens de coleta</h2>
