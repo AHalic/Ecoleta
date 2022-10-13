@@ -3,7 +3,8 @@ import "./style.css";
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import logo from "../../assets/logo.svg";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMapEvents, Popup } from "react-leaflet";
+import { LatLng, LeafletMouseEvent } from "leaflet";
 import api from "../../services/api";
 import axios from "axios";
 
@@ -18,6 +19,10 @@ interface UF {
     sigla: string;
 }
 
+interface City {
+    nome: string;
+}
+
 const CreatePoint = () => {
     // Estado: armazenar informações dentro do componente
     // Sempre que precisar de uma info de um componente, é preciso criar um estado
@@ -25,20 +30,68 @@ const CreatePoint = () => {
     // Sempre que cria um estado para array ou objeto: manualmente iformar o tipo da variavel
     const [items, setItems] = useState<Item[]>([]); 
     const [ufs, setUfs] = useState<UF[]>([]);
+    const [cities, setCities] = useState<City[]>([]);
+    
+    const [selectedUf, setSelectedUf] = useState("0");
+    const [selectedCity, setSelectedCity] = useState("0");
+    const [position, setPosition] = useState<LatLng>(new LatLng(-23.561999, -46.655927));
+
 
     // useEffect: executa uma função assim que o componente é exibido em tela
     // SÓ É EXECUTADO UMA UNICA VEZ
+    
+    // pega os items do banco de dados para apresentar no formulario
     useEffect(() => {
         api.get('items').then(response => {
             setItems(response.data);
         });
     }, []);
 
+    // pega as ufs do IBGE para apresentar no formulario
     useEffect(() => {
         axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados').then(response => {
             setUfs(response.data.map((uf: UF) => {return {nome: uf.nome, sigla: uf.sigla}}));
         });
     }, []);
+
+    // pega as cidades do IBGE para apresentar no formulario de acordo com a uf selecionada
+    useEffect(() => {
+        if (selectedUf === '0') {
+            return;
+        } 
+
+        axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedUf}/municipios`).then(response => {
+            setCities(response.data.map((city: City) => {return {nome: city.nome}}));
+        });
+
+    }, [selectedUf]);
+
+
+    // modifica o valor do estado toda vez que o usuario seleciona uma UF
+    function handleSelectUf(event: React.ChangeEvent<HTMLSelectElement>) {
+        const uf = event.target.value;
+        setSelectedUf(uf);
+    }
+
+    function handleSelectCity(event: React.ChangeEvent<HTMLSelectElement>) {
+        const city = event.target.value;
+        setSelectedCity(city);
+    }
+
+    // TODO: pegar a posição do usuario + opção por click no mapa
+    function LocationMarker() {
+        useMapEvents({
+          click(e:LeafletMouseEvent) {
+            setPosition(e.latlng)
+          }
+        })
+      
+        return position === null ? null : (
+          <Marker position={position}>
+            <Popup>You are here</Popup>
+          </Marker>
+        )
+    }
 
 
     return (
@@ -64,6 +117,7 @@ const CreatePoint = () => {
                         {/* assim como o for */}
                         <label htmlFor="name">Nome da entidade</label>
                         <input 
+                            placeholder="Digite o nome da entidade"
                             type="text" 
                             name="name" 
                             id="name"
@@ -76,6 +130,7 @@ const CreatePoint = () => {
                             {/* assim como o for */}
                             <label htmlFor="email">Email</label>
                             <input 
+                                placeholder="Digite o seu email"
                                 type="email" 
                                 name="email" 
                                 id="email"
@@ -85,6 +140,7 @@ const CreatePoint = () => {
                         {/* assim como o for */}
                         <label htmlFor="celular">Celular</label>
                         <input 
+                            placeholder="Digite o seu telefone celular"
                             type="text" 
                             name="celular" 
                             id="celular"
@@ -101,26 +157,33 @@ const CreatePoint = () => {
                     </legend>
                     
                     {/* center: recebe [latitude, longitude] */}
-                    <MapContainer center={[-23.561999, -46.655927]} zoom={12} style={{ width: '100%', height: 280 }}>
+                    <MapContainer center={position} zoom={12} style={{ width: '100%', height: 280 }}>
                         <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
 
-                        <Marker position={[-23.561999, -46.655927]} />
+                        <Marker position={position} />
+                        <LocationMarker />
                     </MapContainer>
 
                     <div className="field-group">
 
                         <div className="field">
                             <label htmlFor="uf">Estado (UF)</label>
-                            <select name="uf" id="uf">
+                            <select name="uf" id="uf" onChange={handleSelectUf}>
                                 <option value="0">Selecione uma UF</option>
+                                {ufs.map(uf => (
+                                    <option key={uf.sigla} value={uf.sigla}>{uf.sigla}</option>
+                                ))}
                             </select>
                         </div>
 
                         <div className="field">
                             <label htmlFor="city">Cidade</label>
-                            <select name="city" id="city">
+                            <select name="city" id="city" value={selectedCity} onChange={handleSelectCity}>
                                 <option value="0">Selecione uma cidade</option>
+                                {cities.map(city => (
+                                    <option key={city.nome} value={city.nome}>{city.nome}</option>
+                                ))}
                             </select>
                         </div>
 
