@@ -5,7 +5,7 @@ import { SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { useFonts, Ubuntu_700Bold } from '@expo-google-fonts/ubuntu';
 import { Roboto_400Regular, Roboto_500Medium } from '@expo-google-fonts/roboto';
 
-import Home from './src/pages/Home';
+import Routes from './src/routes';
 
 // Não é possivel retornar 2 componentes, por isso o uso do View
 // ou usa-se o Fragment (não produz nenhum elemento HTML)
@@ -40,7 +40,7 @@ export default function App() {
 	return (
 		<SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
 			<StatusBar barStyle="dark-content" translucent backgroundColor="transparent"/>
-			<Home />
+			<Routes />
 		</SafeAreaView>
 	);
 }
