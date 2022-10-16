@@ -39,7 +39,7 @@ export default function App() {
 
 	return (
 		<SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
-			<StatusBar barStyle="dark-content" backgroundColor="transparent"/>
+			<StatusBar barStyle="dark-content" translucent backgroundColor="transparent"/>
 			<Home />
 		</SafeAreaView>
 	);
