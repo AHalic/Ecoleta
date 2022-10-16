@@ -19,7 +19,8 @@
     "react-dom": "18.0.0",
     "react-native": "0.69.6",
     "react-native-web": "~0.18.7",
-    "expo-app-loading": "~2.1.0"
+    "expo-app-loading": "~2.1.0",
+    "expo-splash-screen": "~0.16.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
