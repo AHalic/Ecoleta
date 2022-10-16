@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
 
-import AppLoading from 'expo-app-loading';
 import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { useFonts, Ubuntu_700Bold } from '@expo-google-fonts/ubuntu';
