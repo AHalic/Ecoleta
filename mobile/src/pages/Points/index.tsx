@@ -38,13 +38,13 @@ const Points = () => {
                             longitudeDelta: 0.04,
                         }}>
                         <Marker 
-                            coordinate={{ 
-                                latitude: -23.562283, 
-                                longitude: -46.655571 
-                            }} 
+                            coordinate={{
+                                latitude: -23.562283,
+                                longitude: -46.655571,
+                            }}
                             onPress={handleNavigateToDetail}
                             style={styles.mapMarker}
-                            > 
+                        >
                             <View style={styles.mapMarkerContainer}>
                                 <Image style={styles.mapMarkerImage} source={{uri:"http://192.168.15.35:3333/uploads/lampadas.svg"}}></Image>
                                 <Text style={styles.mapMarkerTitle}>Mercado</Text>
