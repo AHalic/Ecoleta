@@ -21,6 +21,7 @@ const Points = () => {
     return (
         <>
             <View style={styles.container} >
+                {/* botão para voltar a pagina home */}
                 <TouchableOpacity onPress={handleNavigateBack}>
                     <Icon name="arrow-left" size={20} color="#34cb79" />
                 </TouchableOpacity>
@@ -45,14 +46,17 @@ const Points = () => {
                             onPress={handleNavigateToDetail}
                             style={styles.mapMarker}
                         >
+                            {/* modifica o pin do marcador para uma imagem */}
                             <View style={styles.mapMarkerContainer}>
-                                <Image style={styles.mapMarkerImage} source={{uri:"http://192.168.15.35:3333/uploads/lampadas.svg"}}></Image>
+                                <Image style={styles.mapMarkerImage} source={{uri:"https://img.freepik.com/premium-vector/supermarket-shelves-with-products-drinks_182089-303.jpg?w=2000"}}></Image>
                                 <Text style={styles.mapMarkerTitle}>Mercado</Text>
                             </View>
                         </Marker>
                     </MapView>
                 </View>
             </View>
+
+            {/* mostra os itens disponiveis para coleta, com scroll horizontal */}
             <View style={styles.itemsContainer}>
                 <ScrollView 
                     horizontal 
