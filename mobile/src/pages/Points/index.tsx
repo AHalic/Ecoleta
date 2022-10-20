@@ -1,13 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Constants from "expo-constants";
 import { Feather as Icon } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { SvgUri } from "react-native-svg";
+import * as Location from "expo-location";
+
+import api from "../../services/api";
+
+
+interface Item {
+    id: number;
+    title: string;
+    image_url: string;
+}
+
 
 const Points = () => {
     const navigation = useNavigation();
+
+    const [location, setLocation] = useState<[number, number]>([0,0]);
+    const [items, setItems] = useState<Item[]>([]);
+    const [selectedItems, setSelectedItems] = useState<number[]>([]);
+
+    useEffect(() => {
+        api.get("items").then((response) => {
+            setItems(response.data);
+        });
+    });
+
+    useEffect(() => {
+        (async () => {
+          
+          let { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') {
+            Alert.alert('Permission to access location was denied');
+            return;
+          }
+    
+          let location = await Location.getCurrentPositionAsync({});
+          const { latitude, longitude } = location.coords;
+          setLocation([latitude, longitude]);
+        })();
+    }, []);
 
     function handleNavigateBack() {
         navigation.goBack();
@@ -15,6 +51,20 @@ const Points = () => {
 
     function handleNavigateToDetail() {
         navigation.navigate('Detail' as never);
+    }
+
+    function handleSelectItem(id: number) {
+        // para modificar um estado não podemos so fazer um push/pop (todo o estado é substituido)
+        // copiar o array adicionando ou removendo o item selecionado
+
+        const alreadySelected = selectedItems.findIndex(item => item === id);
+
+        if (alreadySelected >= 0) {
+            const filteredItems = selectedItems.filter(item => item !== id);
+            setSelectedItems(filteredItems);
+        } else {
+            setSelectedItems([ ...selectedItems, id ]);
+        }
     }
         
 
@@ -30,29 +80,32 @@ const Points = () => {
                 <Text style={styles.description}>Encontre no mapa um ponto de coleta.</Text>
 
                 <View style={styles.mapContainer}>
-                    <MapView 
-                        style={styles.map} 
-                        initialRegion={{
-                            latitude: -23.562283,
-                            longitude: -46.655571,
-                            latitudeDelta: 0.04,
-                            longitudeDelta: 0.04,
-                        }}>
-                        <Marker 
-                            coordinate={{
-                                latitude: -23.562283,
-                                longitude: -46.655571,
-                            }}
-                            onPress={handleNavigateToDetail}
-                            style={styles.mapMarker}
-                        >
-                            {/* modifica o pin do marcador para uma imagem */}
-                            <View style={styles.mapMarkerContainer}>
-                                <Image style={styles.mapMarkerImage} source={{uri:"https://img.freepik.com/premium-vector/supermarket-shelves-with-products-drinks_182089-303.jpg?w=2000"}}></Image>
-                                <Text style={styles.mapMarkerTitle}>Mercado</Text>
-                            </View>
-                        </Marker>
-                    </MapView>
+                    {/* Verifies if location has already loaded to then load the map component */}
+                    {   location[0] !== 0 && (
+                        <MapView 
+                            style={styles.map} 
+                            initialRegion={{
+                                latitude: location[0],
+                                longitude: location[1],
+                                latitudeDelta: 0.04,
+                                longitudeDelta: 0.04,
+                            }}>
+                            <Marker 
+                                coordinate={{
+                                    latitude: -23.562283,
+                                    longitude: -46.655571,
+                                }}
+                                onPress={handleNavigateToDetail}
+                                style={styles.mapMarker}
+                            >
+                                {/* modifica o pin do marcador para uma imagem */}
+                                <View style={styles.mapMarkerContainer}>
+                                    <Image style={styles.mapMarkerImage} source={{uri:"https://img.freepik.com/premium-vector/supermarket-shelves-with-products-drinks_182089-303.jpg?w=2000"}}></Image>
+                                    <Text style={styles.mapMarkerTitle}>Mercado</Text>
+                                </View>
+                            </Marker>
+                        </MapView>
+                    )}
                 </View>
             </View>
 
@@ -61,12 +114,20 @@ const Points = () => {
                 <ScrollView 
                     horizontal 
                     showsHorizontalScrollIndicator={false} 
-                    contentContainerStyle={{paddingHorizontal: 20}}
-                >
-                    <TouchableOpacity style={styles.item} onPress={() => {}}>
-                        <SvgUri width={42} height={42} uri="http://192.168.15.35:3333/uploads/lampadas.svg" />
-                        <Text style={styles.itemTitle}>Lâmpadas</Text>
-                    </TouchableOpacity>
+                    contentContainerStyle={{paddingHorizontal: 20}}>
+                    {items.map(item => (
+                        <TouchableOpacity 
+                            key={String(item.id)} 
+                            style={[styles.item, 
+                                // adiciona o estilo de selecionado ao item caso ele esteja selecionado (no vetor)
+                                selectedItems.includes(item.id) ? styles.selectedItem : {}]}
+                            onPress={() => handleSelectItem(item.id)}
+                            activeOpacity={0.5}>
+
+                            <SvgUri width={42} height={42} uri={item.image_url} />
+                            <Text style={styles.itemTitle}> {item.title} </Text>
+                        </TouchableOpacity>
+                    ))}
 
                 </ScrollView>
             </View>
