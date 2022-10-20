@@ -16,10 +16,22 @@ interface Item {
     image_url: string;
 }
 
+interface Point {
+    id: number;
+    name: string;
+    image: string;
+    latitude: number;
+    longitude: number;
+    items: {
+        title: string;
+    }[];
+}
+
 
 const Points = () => {
     const navigation = useNavigation();
 
+    const [points, setPoints] = useState<Point[]>([]);
     const [location, setLocation] = useState<[number, number]>([0,0]);
     const [items, setItems] = useState<Item[]>([]);
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
@@ -44,6 +56,12 @@ const Points = () => {
           setLocation([latitude, longitude]);
         })();
     }, []);
+
+    useEffect(() => {
+        api.get("points", {}).then((response) => {
+            setPoints(response.data);
+        });
+    });
 
     function handleNavigateBack() {
         navigation.goBack();
@@ -90,20 +108,24 @@ const Points = () => {
                                 latitudeDelta: 0.04,
                                 longitudeDelta: 0.04,
                             }}>
-                            <Marker 
-                                coordinate={{
-                                    latitude: -23.562283,
-                                    longitude: -46.655571,
-                                }}
-                                onPress={handleNavigateToDetail}
-                                style={styles.mapMarker}
-                            >
-                                {/* modifica o pin do marcador para uma imagem */}
-                                <View style={styles.mapMarkerContainer}>
-                                    <Image style={styles.mapMarkerImage} source={{uri:"https://img.freepik.com/premium-vector/supermarket-shelves-with-products-drinks_182089-303.jpg?w=2000"}}></Image>
-                                    <Text style={styles.mapMarkerTitle}>Mercado</Text>
-                                </View>
-                            </Marker>
+
+                            {points.map(point => (
+                                <Marker 
+                                    key={String(point.id)}
+                                    coordinate={{
+                                        latitude: point.latitude,
+                                        longitude: point.longitude,
+                                    }}
+                                    onPress={handleNavigateToDetail}
+                                    style={styles.mapMarker}
+                                >
+                                    {/* modifica o pin do marcador para uma imagem */}
+                                    <View style={styles.mapMarkerContainer}>
+                                        <Image style={styles.mapMarkerImage} source={{uri:point.name}}></Image>
+                                        <Text style={styles.mapMarkerTitle}>{point.name}</Text>
+                                    </View>
+                                </Marker>
+                            ))}
                         </MapView>
                     )}
                 </View>
