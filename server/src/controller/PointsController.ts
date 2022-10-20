@@ -59,6 +59,7 @@ class PointsController {
     
     async create(req:Request, res:Response){
         const {
+            image,
             name,
             email,
             celular,
@@ -73,7 +74,7 @@ class PointsController {
         const trx = await knex.transaction();
     
         const point = {
-            image: 'image-fake',
+            image,
             name, 
             email,
             celular,
@@ -84,7 +85,7 @@ class PointsController {
         }
 
         const insertedIds = await trx('points').insert({
-            image: 'image-fake',
+            image,
             name, // name: name
             email,
             celular,
@@ -107,6 +108,21 @@ class PointsController {
             id: insertedIds[0],
             ...point 
         });
+    };
+
+    async delete(req:Request, res:Response){
+        const { id } = req.params;
+
+        const point = await knex('points').where('id', id).first();
+
+        if(!point){
+            return res.status(400).json({ message: 'Point not found.' });
+        }
+
+        await knex('point_items').where('point_id', id).delete();
+        await knex('points').where('id', id).delete();
+
+        return res.json({ message: 'Point deleted.' });
     };
 }
 
