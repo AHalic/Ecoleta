@@ -32,7 +32,7 @@ const Points = () => {
     const navigation = useNavigation();
 
     const [points, setPoints] = useState<Point[]>([]);
-    const [location, setLocation] = useState<[number, number]>([0,0]);
+    const [location, setLocation] = useState<[number, number]>([-23.3,-44.6]);
     const [items, setItems] = useState<Item[]>([]);
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
@@ -40,7 +40,7 @@ const Points = () => {
         api.get("items").then((response) => {
             setItems(response.data);
         });
-    });
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -61,7 +61,7 @@ const Points = () => {
         api.get("points", {}).then((response) => {
             setPoints(response.data);
         });
-    });
+    }, []);
 
     function handleNavigateBack() {
         navigation.goBack();
@@ -109,6 +109,7 @@ const Points = () => {
                                 longitudeDelta: 0.04,
                             }}>
 
+
                             {points.map(point => (
                                 <Marker 
                                     key={String(point.id)}
@@ -121,7 +122,7 @@ const Points = () => {
                                 >
                                     {/* modifica o pin do marcador para uma imagem */}
                                     <View style={styles.mapMarkerContainer}>
-                                        <Image style={styles.mapMarkerImage} source={{uri:point.name}}></Image>
+                                        <Image style={styles.mapMarkerImage} source={{uri:point.image}}></Image>
                                         <Text style={styles.mapMarkerTitle}>{point.name}</Text>
                                     </View>
                                 </Marker>
@@ -150,6 +151,10 @@ const Points = () => {
                             <Text style={styles.itemTitle}> {item.title} </Text>
                         </TouchableOpacity>
                     ))}
+                    {/* <TouchableOpacity style={styles.item} onPress={() => {}}>
+                        <SvgUri width={42} height={42} uri="http://192.168.15.35:3333/uploads/lampadas.svg" />
+                        <Text style={styles.itemTitle}>Lâmpadas</Text>
+                    </TouchableOpacity> */}
 
                 </ScrollView>
             </View>
