@@ -40,7 +40,7 @@ const Points = () => {
         api.get("items").then((response) => {
             setItems(response.data);
         });
-    }, []);
+    }, []); // sem o [] o useEffect será executado infinitamente
 
     useEffect(() => {
         (async () => {
