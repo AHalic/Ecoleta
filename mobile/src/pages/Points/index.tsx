@@ -58,10 +58,15 @@ const Points = () => {
     }, []);
 
     useEffect(() => {
-        api.get("points", {}).then((response) => {
+        api.get("points", {
+            params: {
+                // TODO: adicionar filtro de cidade e estado
+                items: selectedItems,
+            }
+        }).then((response) => {
             setPoints(response.data);
         });
-    }, []);
+    }, [selectedItems]);
 
     function handleNavigateBack() {
         navigation.goBack();
