@@ -32,7 +32,7 @@ const Points = () => {
     const navigation = useNavigation();
 
     const [points, setPoints] = useState<Point[]>([]);
-    const [location, setLocation] = useState<[number, number]>([-23.3,-44.6]);
+    const [location, setLocation] = useState<[number, number]>([0,0]);
     const [items, setItems] = useState<Item[]>([]);
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
@@ -67,8 +67,9 @@ const Points = () => {
         navigation.goBack();
     }
 
-    function handleNavigateToDetail() {
-        navigation.navigate('Detail' as never);
+    function handleNavigateToDetail(id:number) {
+        // as never used to avoid the error: Argument of type 'never' is not assignable to parameter of type 'never'
+        navigation.navigate('Detail' as never, { point_id: id } as never);
     }
 
     function handleSelectItem(id: number) {
@@ -117,7 +118,7 @@ const Points = () => {
                                         latitude: point.latitude,
                                         longitude: point.longitude,
                                     }}
-                                    onPress={handleNavigateToDetail}
+                                    onPress={() => handleNavigateToDetail(point.id)}
                                     style={styles.mapMarker}
                                 >
                                     {/* modifica o pin do marcador para uma imagem */}
