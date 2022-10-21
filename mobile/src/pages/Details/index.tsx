@@ -1,15 +1,51 @@
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import api from "../../services/api";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Feather as Icon, FontAwesome } from "@expo/vector-icons";
 import { View, StyleSheet, TouchableOpacity, Image, Text, SafeAreaView } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 
 
+interface Params {
+    point_id: number;
+}
+
+interface Data {
+    point: {
+        image: string;
+        name: string;
+        email: string;
+        celular: string;
+        city: string;
+        uf: string;
+    }
+    items: {
+        title: string;
+    }[];
+}
+
 const Detail = () => {
     const navigation = useNavigation();
+    const route = useRoute();
+
+    const routeParams = route.params as Params;
+
+    const [point, setPoint] = useState<Data>({} as Data);
+
+    useEffect(() => {
+        // acessa a rota /points/:id para pegar os dados especificos deste ponto
+        api.get(`points/${routeParams.point_id}`).then((response) => {
+            setPoint(response.data);
+        });
+    }, []);
 
     function handleNavigateBack() {
         navigation.goBack();
+    }
+
+    // para tela de carregamento
+    if (!point.point) {
+        return null;
     }
 
     return (
@@ -20,13 +56,15 @@ const Detail = () => {
                     <Icon name="arrow-left" size={20} color="#34cb79" />
                 </TouchableOpacity>
 
-                <Image style={styles.pointImage} source={{uri:"https://img.freepik.com/premium-vector/supermarket-shelves-with-products-drinks_182089-303.jpg?w=2000"}}></Image>
-                <Text style={styles.pointName}>Mercado</Text>
-                <Text style={styles.pointItems}>Lâmpadas, Óleo de cozinha</Text>
+                <Image style={styles.pointImage} source={{uri:point.point.image}}></Image>
+                <Text style={styles.pointName}>{point.point.name}</Text>
+                <Text style={styles.pointItems}>
+                    {point.items.map(item => item.title).join(", ")}
+                </Text>
 
                 <View style={styles.address}>
                     <Text style={styles.addressTitle}>Endereço</Text>
-                    <Text style={styles.addressContent}>São Paulo, SP</Text>
+                    <Text style={styles.addressContent}>{point.point.city}, {point.point.uf}</Text>
                 </View>
 
                 <View style={styles.footerContainer}>
