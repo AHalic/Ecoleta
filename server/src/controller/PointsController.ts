@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import knex from '../database/connections';
 import removeAccents from 'remove-accents';
+import multer from '../config/multer';
 
 class PointsController {
     async get(req:Request, res:Response){
@@ -18,7 +19,7 @@ class PointsController {
             .join('point_items', 'points.id', '=', 'point_items.point_id')
             .where((qb) => {
                 if(city){
-                    qb.where('city', removeAccents(String(city).toLowerCase()))
+                    qb.where('city', removeAccents(String(city).toUpperCase()))
                 }
                 if(uf){
                     qb.where('uf', String(uf).toUpperCase())
@@ -58,7 +59,7 @@ class PointsController {
     }
     
     async create(req:Request, res:Response){
-        const {
+        var {
             image,
             name,
             email,
@@ -70,9 +71,16 @@ class PointsController {
             items
         } = req.body;
     
+
         // transaction: se um der erro na ultima, todos os outros também deverão dar
         const trx = await knex.transaction();
     
+        if (image === undefined && req.file){
+            image = `http://192.168.15.35:3333/uploads/${req.file.filename }`
+        } else if (image === undefined) {
+            res.status(400).json({ message: 'Image not found.' });
+        }
+
         const point = {
             image,
             name, 
@@ -84,6 +92,7 @@ class PointsController {
             uf
         }
 
+        
         const insertedIds = await trx('points').insert({
             image,
             name, // name: name
@@ -95,6 +104,10 @@ class PointsController {
             uf
         });
     
+        if (typeof(items) === 'string'){
+            items = items.split(',').map(item => Number(item.trim()));
+        }
+
         await trx('point_items').insert(items.map((item_id: number) => {
             return {
             item_id,
