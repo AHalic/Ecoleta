@@ -37,6 +37,7 @@ const CreatePoint = () => {
     const [selectedUf, setSelectedUf] = useState("0");
     const [selectedCity, setSelectedCity] = useState("0");
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
+    const [selectedFile, setSelectedFile] = useState<File>();
 
     const [position, setPosition] = useState<LatLng>(new LatLng(-23.561999, -46.655927));
 
@@ -128,18 +129,21 @@ const CreatePoint = () => {
         const city = removeAccents(String(selectedCity).toLowerCase());
         const [latitude, longitude] = [position.lat, position.lng];
         const items = selectedItems;
-
-        const data = {
-            name,
-            email,
-            celular,
-            uf,
-            city,
-            latitude,
-            longitude,
-            items
-        };        
-
+        const image = selectedFile;
+        
+        const data = new FormData() 
+        data.append('name', name); 
+        data.append('email', email); 
+        data.append('celular', celular); 
+        data.append('uf', uf); 
+        data.append('city', city); 
+        data.append('latitude', String(latitude)); 
+        data.append('longitude', String(longitude)); 
+        data.append('items', items.join(',')); 
+        
+        if (image) {
+            data.append('image_file', image); 
+        }
         await api.post('points', data);
 
         alert('Ponto de coleta criado!');
@@ -176,7 +180,7 @@ const CreatePoint = () => {
             <form onSubmit={handleSubmit}>
                 <h1>Cadastro do <br /> ponto de coleta</h1>
 
-                <Dropzone/>
+                <Dropzone onFileUploaded={setSelectedFile}/>
 
                 {/* Fields de cadastro do nome da entidade, email e celular */}
                 <fieldset>
