@@ -1,3 +1,5 @@
 node_modules/
 .DS_Store
 *.sqlite
+server/uploads/*jpg
+server/uploads/*png
