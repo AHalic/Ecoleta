@@ -30,35 +30,31 @@ Event promoted by <a href='https://www.rocketseat.com.br'>RocketSeat </a> 🚀 t
 
 
 
-## 🔧 Technologies
+## 📦 Technologies and main packages
 
 This project was developed using the following technologies:
 
-- HTML and CSS
-- [Node (18.10.0) e NPM (8.19.2)](https://nodejs.org/)
-- [Sqlite3](https://www.npmjs.com/package/sqlite3)
-- Typescript (4.8.4)
-- [React (mobile: 18.0.0 web: 18.2.0)](https://reactjs.org)
-- [React Native (0.69.6)](https://reactnative.dev) and [expo](https://expo.dev)
 
-#### 📦 Some of the main packages used
+- **Package manager**: NPM (8.19.2)
+- **Language**: Typescript (4.8.4), HTML, CSS
 
-
-- Server path: 
+- **Backend** ([NodeJs (18.10.0)](https://nodejs.org/) and [Sqlite3](https://www.npmjs.com/package/sqlite3))
     - [express](https://expressjs.com)
     - [knex](https://knexjs.org)
     - [multer](https://www.npmjs.com/package/multer)
 
-- Mobile path: 
+
+- **Mobile path** ([React (18.0.0)](https://reactjs.org)): 
     - [react-navigation](https://reactnavigation.org)
     - [react-native-gesture-handler](https://docs.swmansion.com/react-native-gesture-handler/)
     - [react-native-maps](https://docs.expo.dev/versions/latest/sdk/map-view/)
     - [expo-mail-composer](https://docs.expo.dev/versions/latest/sdk/mail-composer/)
 
-- Web path: 
+- **Web path** ([React Native (0.69.6)](https://reactnative.dev)): 
+    - [expo](https://expo.dev)
     - [react-dropzone](https://react-dropzone.js.org)
     - [leaflet](https://leafletjs.com)
     - [react-router-dom](https://v5.reactrouter.com/web/guides/quick-start)
 
-- Connection:
+- **Connection**:
     - [axios](https://axios-http.com)
