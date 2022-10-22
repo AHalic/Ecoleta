@@ -8,6 +8,7 @@ import { LatLng, LeafletMouseEvent } from "leaflet";
 import api from "../../services/api";
 import axios from "axios";
 import removeAccents from 'remove-accents';
+import Dropzone from "./Dropzone/index";
 
 interface Item {
     id: number;
@@ -174,6 +175,8 @@ const CreatePoint = () => {
 
             <form onSubmit={handleSubmit}>
                 <h1>Cadastro do <br /> ponto de coleta</h1>
+
+                <Dropzone/>
 
                 {/* Fields de cadastro do nome da entidade, email e celular */}
                 <fieldset>
