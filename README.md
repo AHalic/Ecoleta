@@ -68,8 +68,8 @@ npm start
 The app allows you to find all registered centers looking the map, and filtering by items. You can also send a message or an email to the to it.
 
 <p align="center">
-  <img alt="Mobile map page" src=".github/mobile.jpg" width="40%">
-  <img alt="Mobile page" src=".github/mobile_center.jpg" width="40%">
+  <img alt="Mobile map page" src=".github/mobile.jpg" width="20%">
+  <img alt="Mobile page" src=".github/mobile_center.jpg" width="20%">
 </p>
 
 
