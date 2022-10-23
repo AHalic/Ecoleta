@@ -22,11 +22,73 @@ Event promoted by <a href='https://www.rocketseat.com.br'>RocketSeat </a> 🚀 t
 
 #### Backend
 
+The backend is responsable for the connection to the database, from the `server` directory, start running the following command to install all dependencies:
+
+```
+npm install
+```
+
+
+The database contains 3 tables: `Points` representing a recyncling collection center, `Items` representing the recyclables, `Point_Items` representing the relation between points and items. To create all tables and seed `Items` run the following commands:
+
+```
+npm run knex:migrate
+npm run knex:seed
+```
+
+
+And finally, to run the server use the following command:
+
+```
+npm run dev
+```
+
+
+
+##### Routes
+- Items:
+    - `get /items`: list all items registered;
+
+- Points:
+    - `get /points`: lists all centers registered, or filtered by uf, city or items;
+    - `get /points/:id`: lists a specific center registered;
+    - `post /points`: lists all points registered;
+    - `delete /points:id`: deletes a specific point;
+
 
 #### Mobile
 
+To start the mobile server, you may run the following commands from the root folder:
+
+```
+cd mobile
+npm install
+npm start
+```
+
+The app allows you to find all registered centers looking the map, and filtering by items. You can also send a message or an email to the to it.
+
+<p align="center">
+  <img alt="Mobile map page" src=".github/mobile.jpg" width="40%">
+  <img alt="Mobile page" src=".github/mobile_center.jpg" width="40%">
+</p>
+
 
 #### Web
+
+From the web page is possible to register a new collection center. To start this server, you may run the following commands from the root folder:
+
+```
+cd web
+npm install
+npm start
+```
+
+<p align="center">
+  <img alt="Web form" src=".github/forms_upper.png" width="50%">
+  <img alt="Web form" src=".github/forms_lower.png" width="50%">
+</p>
+
 
 
 
