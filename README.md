@@ -1,6 +1,6 @@
 # :recycle: Ecoleta
 
-<h2 align="center"> Next Level Week #01 </h1>
+<h3 align="center"> Next Level Week #01 </h3>
 
 <p align="center">
 Event promoted by <a href='https://www.rocketseat.com.br'>RocketSeat </a> 🚀 to teach Web technologies.
