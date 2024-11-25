@@ -1,11 +1,6 @@
 # :recycle: Ecoleta
 
-<h3 align="center"> Next Level Week #01 </h3>
-
-<p align="center">
-Event promoted by <a href='https://www.rocketseat.com.br'>RocketSeat </a> 🚀 to teach Web technologies.
-</p>
-
+This project implements an app and a website to help users find recycling centres.
 
 <p align="center">
   <a href="#-project">Project</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
